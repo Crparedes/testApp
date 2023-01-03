@@ -1,8 +1,9 @@
 library(shiny)
 
 ui <- fluidPage(
+  actionButton('brwz', label = tags$b('Pausar')),
   # Upload zip files
-  fileInput("file", "Upload Zip file", accept = ".zip"),
+  fileInput("file", "Upload Zip file"),
   # action button to unzip the file
   actionButton("unzip", "Unzip Files"),
   
@@ -16,7 +17,7 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   
-  
+  observeEvent(input$brwz, browser())
   
   output$filedf <- renderTable({
     if(is.null(input$file)){return ()}
