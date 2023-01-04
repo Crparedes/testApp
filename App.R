@@ -1,39 +1,23 @@
 library(shiny)
 
 ui <- fluidPage(
-  actionButton('brwz', label = tags$b('Pausar')),
-  # Upload zip files
-  fileInput("file", "Upload Zip file"),
-  # action button to unzip the file
-  actionButton("unzip", "Unzip Files"),
-  
-  # to display the metadata of the zipped file
-  tableOutput("filedf"),
-  
-  # to display the list of unzipped files
-  tableOutput("zipped")
-  
+  tags$h2('Uploading of a CSV file:'), fileInput("file", "Upload file", accept = '.csv'),
+  tags$h3('File metadata:'), tableOutput("fileMetDat"),
+  tags$hr(),
+  tags$h3('File data:'), tableOutput("fileData")
 )
 
 server <- function(input, output, session) {
   
-  observeEvent(input$brwz, browser())
-  
-  output$filedf <- renderTable({
+  output$fileMetDat <- renderTable({
     if(is.null(input$file)){return ()}
-    input$file # the file input data frame object that contains the file attributes
+    input$file
   })
   
-  
-  # Unzipping files on click of button and then rendering the result to dataframe
-  observeEvent(input$unzip,
-               output$zipped <- renderTable({
-                 unzip(input$file$datapath, list = TRUE, exdir = getwd())
-               })
-               
-  )
-  
-  
+  output$fileData <- renderTable({
+    if(is.null(input$file)){return ()}
+    read.csv(input$file$datapath, sep = ';')
+  })
 }
 
 shinyApp(ui, server)
